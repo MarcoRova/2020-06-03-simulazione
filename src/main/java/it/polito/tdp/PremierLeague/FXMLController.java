@@ -5,9 +5,15 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import org.jgrapht.graph.DefaultWeightedEdge;
+
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Player;
+import it.polito.tdp.PremierLeague.model.Sconfitto;
+import it.polito.tdp.PremierLeague.model.TopPlayer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,15 +51,89 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
 
+    	this.txtResult.clear();
+    	
+    	double x = 0.0;
+    	try {
+    		x = Double.parseDouble(this.txtGoals.getText());
+    		
+    		if(x<0.0){
+    			this.txtResult.setText("Numeri negativi non ammessi.");
+    			return;
+    		}
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("Formato non corretto per i goal fatti.");
+    		return;
+    	}
+    	
+    	this.model.creaGrafo(x);
+    	
+    	this.txtResult.appendText(this.model.infoGrafo());
+    	
+    	
     }
 
     @FXML
     void doDreamTeam(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	
+    	int k = 0;
+    	try {
+    		k = Integer.parseInt(this.txtK.getText());
+    		
+    		if(k<0.0){
+    			this.txtResult.setText("Numeri negativi non ammessi.");
+    			return;
+    		}
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("Formato non corretto per il numero di giocatori.");
+    		return;
+    	}
+    	
+    	if(this.model.getGrafo() == null) {
+    		txtResult.appendText("Crea il grafo!");
+    		return;
+    	}
+    	
+    	List<Player> dreamTeam = this.model.getDreamTeam(k);
+    	int degree = this.model.getBestDegree();
+    	
+    	txtResult.appendText("DREAM TEAM - grado di titolarità: " + degree + "\n\n");
+    	for(Player p : dreamTeam)
+    		txtResult.appendText(p.toString() + "\n");
 
     }
 
     @FXML
     void doTopPlayer(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	double x = 0.0;
+    	try {
+    		x = Double.parseDouble(this.txtGoals.getText());
+    		
+    		if(x<0.0){
+    			this.txtResult.setText("Numeri negativi non ammessi.");
+    			return;
+    		}
+    	}catch(NumberFormatException e) {
+    		txtResult.setText("Formato non corretto per i goal fatti.");
+    		return;
+    	}
+    	
+    	if(this.model.getGrafo() == null) {
+    		txtResult.appendText("Crea il grafo!");
+    		return;
+    	}
+    	
+    	TopPlayer tp = this.model.getTopPlayer(x);
+    	
+    	this.txtResult.appendText("TOP PLAYER: "+tp.getTopPlayer()+"\n");
+    	
+    	for(Sconfitto s : tp.getSconfitti())
+    		this.txtResult.appendText(s.toString()+"\n");
 
     }
 
